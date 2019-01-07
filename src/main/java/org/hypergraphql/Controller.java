@@ -85,6 +85,13 @@ public class Controller {
             return "";
         });
 
+        // app_status
+
+        hgqlService.get("/app_status", (req, res) -> {
+            setResponseHeaders(req, res);
+            return "OK";
+        });
+        
         // get method for accessing the GraphiQL UI
 
         hgqlService.get(config.getGraphqlConfig().graphiQLPath(), (req, res) -> {

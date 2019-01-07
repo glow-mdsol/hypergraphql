@@ -19,6 +19,7 @@ import java.util.Set;
 public class SPARQLServiceConverter {
 
     private final static String RDF_TYPE_URI = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>";
+    private final static String RDFS_SUBCLASS_URI = "<http://www.w3.org/2000/01/rdf-schema#subClassOf>";
     private final static String NAME = "name";
     private final static String URIS = "uris";
     private final static String NODE_ID = "nodeId";
@@ -154,7 +155,8 @@ public class SPARQLServiceConverter {
         String targetURI = schema.getTypes().get(targetName).getId();
         String graphID = ((SPARQLEndpointService) schema.getQueryFields().get(queryField.get(NAME).asText()).service()).getGraph();
         String nodeId = queryField.get(NODE_ID).asText();
-        String selectTriple = toTriple(toVar(nodeId), RDF_TYPE_URI, uriToResource(targetURI));
+        String selectTriple = " { " + toTriple(toVar(nodeId), RDF_TYPE_URI, uriToResource(targetURI))
+            + " } UNION { " + toTriple(toVar(nodeId), RDFS_SUBCLASS_URI, uriToResource(targetURI)) + " } ";
         String valueSTR = valuesClause(nodeId, uris);
         String filterSTR = filterClause(nodeId, uris);
 
@@ -171,7 +173,8 @@ public class SPARQLServiceConverter {
         String graphID = ((SPARQLEndpointService) schema.getQueryFields().get(queryField.get(NAME).asText()).service()).getGraph();
         String nodeId = queryField.get(NODE_ID).asText();
         String limitOffsetSTR = limitOffsetClause(queryField);
-        String selectTriple = toTriple(toVar(nodeId), RDF_TYPE_URI, uriToResource(targetURI));
+        String selectTriple = " { " + toTriple(toVar(nodeId), RDF_TYPE_URI, uriToResource(targetURI))
+            + " } UNION { " + toTriple(toVar(nodeId), RDFS_SUBCLASS_URI, uriToResource(targetURI)) + " } ";
         String rootSubquery = selectSubqueryClause(nodeId, selectTriple, limitOffsetSTR);
 
         JsonNode subfields = queryField.get(FIELDS);
